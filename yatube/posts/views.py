@@ -113,8 +113,6 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    # информация о текущем пользователе доступна в переменной request.user
-    # ...
     template = 'posts/follow.html'
     authors = User.objects.get(username=request.user)
     authors = set(authors.follower.values_list('author'))
@@ -129,11 +127,13 @@ def follow_index(request):
 def profile_follow(request, username):
     author = User.objects.get(username=username)
     if (request.user.get_username() != username and not
-            Follow.objects.filter(user=request.user, author=author.id).exists()):
-        Follow.objects.select_related('author').create(
+            Follow.objects.filter(
                 user=request.user,
-                author=User.objects.get(username=username)
-            )
+                author=author.id).exists()):
+        Follow.objects.select_related('author').create(
+            user=request.user,
+            author=User.objects.get(username=username)
+        )
         return redirect('posts:profile', username)
     return redirect('posts:profile', username)
 
