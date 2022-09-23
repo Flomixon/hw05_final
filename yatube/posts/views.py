@@ -40,12 +40,15 @@ def profile(request, username):
     template = 'posts/profile.html'
     post_list = author.post_user.all()
     page_obj = pagin(post_list, request, 10)
+    user = request.user
     following = False
-    if request.user.is_authenticated:
-        if Follow.objects.filter(user=request.user, author=author.id).exists():
-            following = True
+    if user.is_authenticated:
+        following = Follow.objects.filter(
+            user=request.user,
+            author=author.id
+        ).exists()
     context = {
-        'user': request.user,
+        'user': user,
         'author': author,
         'page_obj': page_obj,
         'following': following
@@ -54,7 +57,9 @@ def profile(request, username):
 
 
 def post_detail(request, post_id):
-    post = get_object_or_404(Post.objects.select_related('author'), id=post_id)
+    post = get_object_or_404(
+        Post.objects.select_related('author'),
+        id=post_id)
     template = 'posts/post_detail.html'
     form = CommentForm(request.POST or None)
     context = {
@@ -114,7 +119,7 @@ def add_comment(request, post_id):
 @login_required
 def follow_index(request):
     template = 'posts/follow.html'
-    authors = User.objects.get(username=request.user)
+    authors = get_object_or_404(User, username=request.user)
     authors = set(authors.follower.values_list('author'))
     post_list = Post.objects.select_related('author').\
         select_related('group').filter(author__in=authors).all()
@@ -125,16 +130,12 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
-    author = User.objects.get(username=username)
-    if (request.user.get_username() != username and not
-            Follow.objects.filter(
-                user=request.user,
-                author=author.id).exists()):
-        Follow.objects.select_related('author').create(
+    author = get_object_or_404(User, username=username)
+    if request.user.get_username() != username:
+        Follow.objects.select_related('author').get_or_create(
             user=request.user,
-            author=User.objects.get(username=username)
+            author=author
         )
-        return redirect('posts:profile', username)
     return redirect('posts:profile', username)
 
 

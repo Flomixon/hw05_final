@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from django.core.cache import cache
 from django.test import TestCase, Client
 from ..models import Group, Post, User
@@ -24,7 +25,7 @@ class URLTests(TestCase):
 
     def test_page_404(self):
         response = self.guest_client.get('test')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
         self.assertTemplateUsed(response, 'core/404.html')
 
     def test_urls_uses_correct_template(self):
@@ -54,7 +55,7 @@ class URLTests(TestCase):
         for url in urls_name:
             with self.subTest(url=url):
                 response = self.authorized_client.get(url)
-                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_correct_urls_guest(self):
         urls_name = (
@@ -66,7 +67,7 @@ class URLTests(TestCase):
         for url in urls_name:
             with self.subTest(url=url):
                 response = self.guest_client.get(url)
-                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_correct_urls_guest(self):
         response = self.guest_client.get('/create/')

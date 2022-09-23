@@ -91,7 +91,6 @@ class CreateFormTest(TestCase):
             reverse('posts:post_detail', kwargs={'post_id': '1'})
         )
         post_upd = Post.objects.get(id=1)
-        self.assertEqual(post_ex.id, post_upd.id)
         self.assertEqual(post_ex.text, post_upd.text)
         self.assertEqual(post_ex.pub_date, post_upd.pub_date)
         self.assertEqual(post_ex.author_id, post_upd.author_id)
