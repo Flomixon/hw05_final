@@ -39,7 +39,10 @@
           </p>
           {% if post.author == user %}
           <div>
-            <a href="{% url "posts:post_edit" post.id %}">Редактировать</a>
+            <a 
+              class="btn btn-lg btn-primary"
+              href="{% url "posts:post_edit" post.id %}" role="button"
+              >Редактировать</a>
           </div>
           {% endif %}
           <div>

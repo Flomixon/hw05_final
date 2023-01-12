@@ -95,6 +95,7 @@ class CreateFormTest(TestCase):
         self.assertEqual(post_ex.pub_date, post_upd.pub_date)
         self.assertEqual(post_ex.author_id, post_upd.author_id)
         self.assertEqual(post_ex.group_id, post_upd.group_id)
+        self.assertEqual(post_ex.image, post_upd.image)
 
     def test_create_comment(self):
         form_data = {
